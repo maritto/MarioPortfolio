@@ -8,9 +8,20 @@ namespace MarioPortfolio.Controllers
 {
     public class TicTacToeController : Controller
     {
+        
         public IActionResult Index()
         {
             return View();
+        }
+
+        public IActionResult Easy()
+        {
+            return View("GameView");
+        }
+
+        public IActionResult NotSoEasy()
+        {
+            return View("GameView");
         }
     }
 }
