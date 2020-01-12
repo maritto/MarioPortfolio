@@ -3,6 +3,18 @@
     ViewData["Title"] = "GameView";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<h1>GameView</h1>
-
+<div class="col-lg-10">
+    <div class="col-lg-10 float-lg-right">
+        <div class="grid-container">
+            @for (int x = 0; x < 3; x++)
+            {
+                @for (int y = 0; y < 3; y++)
+                {
+                    <div onclick="Play([@x,@y])" class="cell-@x-@y border btn btn-outline-primary scale-height-1to1 d-block p-0">
+                        <span class="text-size vertically-center" id="@x@y"></span>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
