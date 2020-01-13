@@ -146,3 +146,13 @@ body {
 .forbidden-action{
     cursor:not-allowed;
 }
+
+.result-screen{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%)
+}
+
+.hide{
+    display:none;
+}

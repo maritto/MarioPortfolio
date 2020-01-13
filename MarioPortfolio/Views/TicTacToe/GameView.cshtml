@@ -18,3 +18,26 @@
         </div>
     </div>
 </div>
+<div id="result-screen" class="result-screen col-lg-7 text-center hide">
+    <div class="card">
+        <div class="card-header h1">
+            <span id="result">Victory</span>
+        </div>
+        <div class="card-body h3">
+            Win count<br /> <span id="win-count"></span><br />Win rate<br /><span id="win-rate"></span>
+        </div>
+        <div class="card mb p-4 box-shadow border border-right-0 border-left-0">
+            <div class="text-center mb-5">
+                <label class="h1 text-success">Play again</label>
+            </div>
+            <div class="row m-0">
+                <div class="card col-lg-6 border-0 mt-1 mb-1">
+                    <a asp-action="Easy" asp-route-id="@Guid.NewGuid()" class="btn btn-primary"><h3>Easy</h3></a>
+                </div>
+                <div class="card col-lg-6 border-0 mt-1 mb-1">
+                    <a asp-action="NotSoEasy" asp-route-id="@Guid.NewGuid()" class="btn btn-primary"> <h3>Not so Easy</h3></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

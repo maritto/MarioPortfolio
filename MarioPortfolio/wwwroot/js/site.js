@@ -11,6 +11,7 @@ $(window).on("resize", ScaleFontSize);
 var isPlayerTurn = true;
 var fontSize = 0.25;
 var TicTacToeMap = [,];
+var gameOver = false;
 
 function ScaleWith1To1Ratio() {
     $(".scale-height-1to1").each(function () { $(".scale-height-1to1").height($(this).width()) });
@@ -21,21 +22,29 @@ function ScaleFontSize() {
 }
 
 function Play(coord) {
-    if (CheckIfValid(coord)) {
-        if (isPlayerTurn) {
-            $("#" + coord[0] + "" + coord[1]).html("X");
-            TicTacToeMap[coord] = 'X';
-        } else {
-            $("#" + coord[0] + "" + coord[1]).html("O");
-            TicTacToeMap[coord] = 'O';
-        }
-        if (!ExistMovesAvailable())
-            EndGame(false);
-        $("#" + coord[0] + coord[1]).parent().removeClass("btn-outline-primary");
-        $("#" + coord[0] + coord[1]).parent().addClass("forbidden-action");
-        if (DidWeWinYet(coord))
-            EndGame(true);
-        isPlayerTurn = !isPlayerTurn;
+    if (gameOver == true) {
+        return;
+    }
+        if (CheckIfValid(coord)) {
+            if (isPlayerTurn) {
+                $("#" + coord[0] + "" + coord[1]).html("X");
+                TicTacToeMap[coord] = 'X';
+            } else {
+                $("#" + coord[0] + "" + coord[1]).html("O");
+                TicTacToeMap[coord] = 'O';
+            }
+            if (!ExistMovesAvailable())
+                EndGame(false);
+            $("#" + coord[0] + coord[1]).parent().removeClass("btn-outline-primary");
+            $("#" + coord[0] + coord[1]).parent().addClass("forbidden-action");
+            if (DidWeWinYet(coord)) {
+                if (isPlayerTurn) {
+                    EndGame(true);
+                } else {
+                    EndGame(false);
+                }
+            }
+            isPlayerTurn = !isPlayerTurn;
     }
 }
 
@@ -58,38 +67,25 @@ function ExistMovesAvailable() {
 }
 
 function EndGame(XWin) {
-    if (XWin == true)
-        alert("Victory");
-    else
-        alert("Defeat");
+    gameOver = true;
+    if (XWin == true) {
+        $("#result").text("X won !");
+        $("#result-screen").removeClass("hide");
+    }
+    else {
+        $("#result").text("O won !");
+        $("#result-screen").removeClass("hide");
+    }
 }
 
 function DidWeWinYet(coord) {
-    if (CheckAbove(coord)) {
-        var coordAbove = coord[1] + 1;
-        if (CheckAbove(coord[0] + "," + coordAbove)) {
-            return true;
-        }
-        var coordBelow = coord[1] - 1;
-        if (CheckBelow(coord[0] + "," + coordBelow)) {
-            return true;
-        }
-    }
-}
-
-function CheckAbove(coord) {
-    var coordAbove = coord[1] + 1;
-    if (TicTacToeMap[coord] == TicTacToeMap[coord[0] + "," + coordAbove]) {
+    if (TicTacToeMap[coord[0] + ",0"] == TicTacToeMap[coord[0] + ",1"] && TicTacToeMap[coord[0] + ",1"] == TicTacToeMap[coord[0] + ",2"])
         return true;
-    }
-    return false
-}
-
-function CheckBelow() {
-    if (TicTacToeMap[coord] == TicTacToeMap[coord[0] + "," + (coord[1] - 1)]) {
+    if (TicTacToeMap["0," + coord[1]] == TicTacToeMap["1," + coord[1]] && TicTacToeMap["1," + coord[1]] == TicTacToeMap["2," + coord[1]])
         return true;
-    }
+    if (TicTacToeMap["1,1"] != undefined && TicTacToeMap["0,0"] == TicTacToeMap["1,1"] && TicTacToeMap["1,1"] == TicTacToeMap["2,2"])//diagonal check
+        return true;
+    if (TicTacToeMap["1,1"] != undefined && TicTacToeMap["0,2"] == TicTacToeMap["1,1"] && TicTacToeMap["1,1"] == TicTacToeMap["2,0"])//diagonal check
+        return true;
     return false;
 }
-
-//Try instead using directions and just delete this garbage code. ARRRRGH
