@@ -70,6 +70,40 @@ namespace MarioPortfolio.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("MarioPortfolio.Models.TicTacToe.TTTLeaderboards", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("GameCount");
+
+                    b.Property<int>("GameCountEasy");
+
+                    b.Property<int>("WinCount");
+
+                    b.Property<int>("WinCountEasy");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("TTTLeaderboards");
+                });
+
+            modelBuilder.Entity("MarioPortfolio.Models.TicTacToe.TicTacToeMatch", b =>
+                {
+                    b.Property<Guid>("GameId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("Easy");
+
+                    b.Property<string>("Moves");
+
+                    b.Property<Guid>("UserId");
+
+                    b.HasKey("GameId");
+
+                    b.ToTable("TicTacToeMatch");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")

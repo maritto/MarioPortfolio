@@ -7,8 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="NewFolder\**" />
+    <Content Remove="NewFolder\**" />
+    <EmbeddedResource Remove="NewFolder\**" />
+    <None Remove="NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Data\Migrations\00000000000000_CreateIdentitySchema.cs" />
     <Compile Remove="Data\Migrations\00000000000000_CreateIdentitySchema.Designer.cs" />
+    <Compile Remove="Migrations\20200127055028_last.cs" />
+    <Compile Remove="Migrations\20200127055028_last.Designer.cs" />
   </ItemGroup>
 
 
@@ -21,7 +30,6 @@
 
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
-    <Folder Include="NewFolder\" />
   </ItemGroup>
 
 </Project>

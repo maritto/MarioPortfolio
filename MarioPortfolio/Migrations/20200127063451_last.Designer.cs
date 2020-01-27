@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MarioPortfolio.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200111024252_DBMIgra")]
-    partial class DBMIgra
+    [Migration("20200127063451_last")]
+    partial class last
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -70,6 +70,40 @@ namespace MarioPortfolio.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("MarioPortfolio.Models.TicTacToe.TTTLeaderboards", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("GameCount");
+
+                    b.Property<int>("GameCountEasy");
+
+                    b.Property<int>("WinCount");
+
+                    b.Property<int>("WinCountEasy");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("TTTLeaderboards");
+                });
+
+            modelBuilder.Entity("MarioPortfolio.Models.TicTacToe.TicTacToeMatch", b =>
+                {
+                    b.Property<Guid>("GameId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("Easy");
+
+                    b.Property<string>("Moves");
+
+                    b.Property<Guid>("UserId");
+
+                    b.HasKey("GameId");
+
+                    b.ToTable("TicTacToeMatch");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

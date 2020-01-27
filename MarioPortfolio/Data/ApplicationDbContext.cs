@@ -14,8 +14,8 @@ namespace MarioPortfolio.Data
         {
         }
 
-        public DbSet<Models.TicTacToe.TTTLeaderboards> TTTLeaderboards;
+        public DbSet<Models.TicTacToe.TTTLeaderboards> TTTLeaderboards { get; set; }
+        public DbSet<Models.TicTacToe.TicTacToeMatch> TicTacToeMatch { get; set; }
 
-        public DbSet<MarioPortfolio.Models.TicTacToe.TTTLeaderboards> TTTLeaderboards_1 { get; set; }
     }
 }
