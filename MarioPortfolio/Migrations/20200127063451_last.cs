@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MarioPortfolio.Migrations
 {
-    public partial class DBMIgra : Migration
+    public partial class last : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,6 +45,35 @@ namespace MarioPortfolio.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TicTacToeMatch",
+                columns: table => new
+                {
+                    GameId = table.Column<Guid>(nullable: false),
+                    UserId = table.Column<Guid>(nullable: false),
+                    Moves = table.Column<string>(nullable: true),
+                    Easy = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TicTacToeMatch", x => x.GameId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TTTLeaderboards",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(nullable: false),
+                    WinCountEasy = table.Column<int>(nullable: false),
+                    GameCountEasy = table.Column<int>(nullable: false),
+                    WinCount = table.Column<int>(nullable: false),
+                    GameCount = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TTTLeaderboards", x => x.UserId);
                 });
 
             migrationBuilder.CreateTable(
@@ -209,6 +238,12 @@ namespace MarioPortfolio.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "TicTacToeMatch");
+
+            migrationBuilder.DropTable(
+                name: "TTTLeaderboards");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

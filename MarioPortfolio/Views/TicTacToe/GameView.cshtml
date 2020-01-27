@@ -1,0 +1,45 @@
+﻿
+@{
+    ViewData["Title"] = "GameView";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<input type="hidden" id="user-id" data-userid="@User.Claims.First().Value" />
+<input type="hidden" id="user-id" data-userid=" " />
+<div class="col-lg-10">
+    <div class="col-lg-10 float-lg-right">
+        <div class="grid-container">
+            @for (int x = 0; x < 3; x++)
+            {
+                @for (int y = 0; y < 3; y++)
+                {
+                    <div onclick="Play([@x,@y])" class="cell-@x-@y border btn btn-outline-primary scale-height-1to1 d-block p-0">
+                        <span class="text-size vertically-center" id="@x@y"></span>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+<div id="result-screen" class="result-screen col-lg-7 text-center hide">
+    <div class="card">
+        <div class="card-header h1">
+            <span id="result">Victory</span>
+        </div>
+        <div class="card-body h3">
+            Game Count<br /> <span id="game-count"></span><br />Win count<br /> <span id="win-count"></span><br />Win rate<br /><span id="win-rate"></span>%
+        </div>
+        <div class="card mb p-4 box-shadow border border-right-0 border-left-0">
+            <div class="text-center mb-5">
+                <label class="h1 text-success">Play again</label>
+            </div>
+            <div class="row m-0">
+                <div class="card col-lg-6 border-0 mt-1 mb-1">
+                    <a asp-action="Easy" asp-route-id="@Guid.NewGuid()" class="btn btn-primary"><h3>Easy</h3></a>
+                </div>
+                <div class="card col-lg-6 border-0 mt-1 mb-1">
+                    <a asp-action="NotSoEasy" asp-route-id="@Guid.NewGuid()" class="btn btn-primary"> <h3>Not so Easy</h3></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
