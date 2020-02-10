@@ -3,20 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using EasyImageHandler;
 using MarioPortfolio.Data;
 using MarioPortfolio.Models.TicTacToe;
+using MarioPortfolio.TicTacToeAi;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MarioPortfolio.Controllers
 {
-    public class LeaderBoardsDisplay
-    {
-        public string Username { get; set; }
-        public TTTLeaderboards TTTLeaderboardsEasy { get; set; }
-        public TTTLeaderboards TTTLeaderboardsNotSoEasy { get; set; }
-    }
 
     public class TicTacToeController : Controller
     {
@@ -34,47 +30,41 @@ namespace MarioPortfolio.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            List<LeaderBoardsDisplay> leaderBoardsDisplays = new List<LeaderBoardsDisplay>();
+            Dictionary<string, TTTLeaderboards>[] leaderBoardsDisplays = new Dictionary<string, TTTLeaderboards>[2];
+            leaderBoardsDisplays[0] = new Dictionary<string, TTTLeaderboards>();
+            leaderBoardsDisplays[1] = new Dictionary<string, TTTLeaderboards>();
+            var tempDic = new Dictionary<string, TTTLeaderboards>();
+
+            //Get easy leaderboards,
             try
             {
-                foreach (var item in _context.TTTLeaderboards.OrderByDescending(p => p.WinCountEasy / p.GameCountEasy).Take(10).ToList())
+                foreach (var item in _context.TTTLeaderboards.Where(p => p.GameCountEasy > 0).OrderByDescending(p => p.WinCountEasy / p.GameCountEasy).Take(10).ToList())
                 {
-                    LeaderBoardsDisplay boardsDisplayTemp = new LeaderBoardsDisplay();
-                    boardsDisplayTemp.TTTLeaderboardsEasy = item;
-                    boardsDisplayTemp.Username = _context.Users.Where(p => p.Id == item.UserId.ToString()).First().UserName;
-                    leaderBoardsDisplays.Add(boardsDisplayTemp);
+                    leaderBoardsDisplays[0].Add(
+                            _context.Users.Where(p => p.Id == item.UserId.ToString()).First().UserName,
+                               item
+                               );
                 }
             }
-            catch
+            catch (Exception e)
             {
-                Console.WriteLine("No Leaderboard users.");
+                throw e;
             }
+            //Get not so easy leaderboards
+            tempDic = new Dictionary<string, TTTLeaderboards>();//clear the dictionary
             try
             {
-                foreach (var item in _context.TTTLeaderboards.OrderByDescending(p => p.WinCount / p.GameCount).Take(10).ToList())
+                foreach (var item in _context.TTTLeaderboards.Where(p => p.GameCount > 0).OrderByDescending(p => p.WinCount / p.GameCount).Take(10).ToList())
                 {
-                    try
-                    {
-                        leaderBoardsDisplays
-                            .Where(p => p.TTTLeaderboardsEasy.UserId == item.UserId)
-                            .First()
-                            .TTTLeaderboardsNotSoEasy = item;
-                    }
-                    catch
-                    {
-                        LeaderBoardsDisplay boardsDisplayTemp = new LeaderBoardsDisplay();
-                        boardsDisplayTemp.TTTLeaderboardsNotSoEasy = item;
-                        boardsDisplayTemp.Username = _context.Users
-                            .Where(p => p.Id == item.UserId.ToString())
-                            .First()
-                            .UserName;
-                        leaderBoardsDisplays.Add(boardsDisplayTemp);
-                    }
+                    leaderBoardsDisplays[1].Add(
+                            _context.Users.Where(p => p.Id == item.UserId.ToString()).First().UserName,
+                               item
+                               );
                 }
             }
-            catch
+            catch (Exception e)
             {
-                Console.WriteLine("No leaderboards on the notsoeasy mode.");
+                throw e;
             }
             return View(leaderBoardsDisplays);
         }
@@ -82,7 +72,7 @@ namespace MarioPortfolio.Controllers
         [Authorize]
         public IActionResult Easy(Guid Id)
         {
-            if(!CreateGame(Id, out _, true))
+            if (!CreateGame(Id, out _, true))
             {
                 throw new Exception("Failed to create new game.");
             }
@@ -201,9 +191,8 @@ namespace MarioPortfolio.Controllers
         [Authorize]
         public string PlayerAction()
         {
-            Guid tempGameId = new Guid();
             TicTacToeMatch tmpTTL;
-            if (!Guid.TryParse(GameId, out tempGameId))
+            if (!Guid.TryParse(GameId, out var tempGameId))
             {
                 return null;
             }
@@ -213,8 +202,8 @@ namespace MarioPortfolio.Controllers
             if (IsMovePossible(Coordinates, tmpTTL))
             {
                 RegisterMove(Coordinates, tmpTTL);
-                bool?[,] map = BuildMap(tmpTTL.Moves);
-                if (IsWinConditionAchieved(map, out bool? winner))
+                bool?[,] map = tmpTTL.Moves.BuildMap();
+                if (map.IsWinConditionAchieved(out bool? winner))
                 {
                     LockGame(tmpTTL, winner);
                     GameEnded(tmpTTL);
@@ -227,15 +216,25 @@ namespace MarioPortfolio.Controllers
                         GameEnded(tmpTTL);
                     }
                 }
-                return ComputerMove(map,tmpTTL.Easy);
+                string pcMove = tmpTTL.Easy ? map.EasyMove() : map.NotSoEasyMove();
+                if (pcMove != null && IsMovePossible(pcMove, tmpTTL))
+                {
+                    RegisterMove(pcMove, tmpTTL);
+                    if (tmpTTL.Moves.Split('-').Count() % 2 == 0)
+                    {
+                        return pcMove;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return winner.ToString();
+                }
             }
             return null;
-        }
-
-        //TODO:
-        private string ComputerMove(bool?[,] map, bool easy)
-        {
-            return "true";
         }
 
         private void GameEnded(TicTacToeMatch tmpttl)
@@ -257,7 +256,7 @@ namespace MarioPortfolio.Controllers
                 }
                 _context.Update(player);
             }
-            catch (Exception e)
+            catch
             {
                 player = new TTTLeaderboards();
                 if (tmpttl.Moves.Contains('X'))
@@ -291,73 +290,6 @@ namespace MarioPortfolio.Controllers
                 tmpTTL.Moves = $"{tmpTTL.Moves}-#O";
             _context.TicTacToeMatch.Update(tmpTTL);
             _context.SaveChanges();
-        }
-
-        /// <summary>
-        /// Verifies if there is 3 of the same in a row
-        /// </summary>
-        /// <param name="tmpTTL">Match Details</param>
-        /// <param name="winner">Returns result for X</param>
-        /// <returns>Returns if a win condition was achieved.</returns>
-        private bool IsWinConditionAchieved(bool?[,] map, out bool? winner)
-        {
-
-            //verify all rows
-            for (int x = 0; x < 3; x++)
-            {
-                if (map[x, 0] == map[x, 1] && map[x, 0] == map[x, 2] && map[x, 2] != null)
-                {
-                    winner = map[x, 0];
-                    return true;
-                }
-            }
-            //verify all collums
-            for (int y = 0; y < 3; y++)
-            {
-                if (map[0, y] == map[1, y] && map[0, y] == map[2, y] && map[2, y] != null)
-                {
-                    winner = map[0, y];
-                    return true;
-                }
-            }
-            //verify diagonals
-            if (map[0, 0] == map[1, 1] && map[1, 1] == map[2, 2] && map[1, 1] != null)
-            {
-                winner = map[1, 1];
-                return true;
-            }
-            if (map[0, 2] == map[1, 1] && map[2, 0] == map[1, 1] && map[1, 1] != null)
-            {
-                winner = map[1, 1];
-                return true;
-            }
-            //if none confirms its not over yet
-            winner = null;
-            return false;
-        }
-
-        /// <summary>
-        /// Builds a game map where X is true and O is false
-        /// </summary>
-        /// <param name="moves">List of moves in string format</param>
-        /// <returns>Map array</returns>
-        private bool?[,] BuildMap(string moves)
-        {
-            bool?[,] tmpMap = new bool?[3, 3];
-            var coordinates = moves.Split('-');
-            for (int count = 0; count < coordinates.Length; count++)
-            {
-                int[] x = ParseCoordinates(coordinates[count]);
-                if (count == 0 || count % 2 == 0)
-                {
-                    tmpMap[x[0], x[1]] = true;
-                }
-                else
-                {
-                    tmpMap[x[0], x[1]] = false;
-                }
-            }
-            return tmpMap;
         }
 
         private void RegisterMove(string coordinates, TicTacToeMatch tmpTTL)
@@ -425,7 +357,7 @@ namespace MarioPortfolio.Controllers
                 if (tTTLeaderboards == null)
                     return false;
             }
-            catch (Exception e)
+            catch
             {
                 tTTLeaderboards = null;
                 return false;
