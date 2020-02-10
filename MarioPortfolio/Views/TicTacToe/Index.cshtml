@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MarioPortfolio.Controllers.LeaderBoardsDisplay>
+﻿@model Dictionary<string, MarioPortfolio.Models.TicTacToe.TTTLeaderboards>[]
 
 @{
     ViewData["Title"] = "Index";
@@ -35,42 +35,48 @@
                 <thead>
                     <tr>
                         <th class="text-center">
-                            @Html.DisplayNameFor(model => model.First().Username)
+                            @Html.DisplayNameFor(model => model[0].First().Key)
                         </th>
                         <th class="text-center">
-                            @Html.DisplayNameFor(model => model.First().TTTLeaderboardsEasy.WinCount)
+                            @Html.DisplayNameFor(model => model[0].First().Value.WinCountEasy)
                         </th>
                         <th class="text-center">
                             WinRate
                         </th>
                         <th class="text-center">
-                            @Html.DisplayNameFor(model => model.First().TTTLeaderboardsEasy.GameCount)
+                            @Html.DisplayNameFor(model => model[0].First().Value.GameCountEasy)
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     @try
                     {
-                        foreach (var item in Model.OrderByDescending(p => (float)p.TTTLeaderboardsEasy.WinCountEasy / (float)p.TTTLeaderboardsEasy.GameCountEasy).Take(10).ToList())
+                        if (Model != null)
                         {
-                            <tr>
-                                <td class="text-center">
-                                    @Html.DisplayFor(modelItem => item.Username)
-                                </td>
-                                <td class="text-center">
-                                    @Html.DisplayFor(modelItem => item.TTTLeaderboardsEasy.WinCountEasy)
-                                </td>
-                                <td class="text-center">
-                                    @Math.Round((double)item.TTTLeaderboardsEasy.WinCountEasy / (double)item.TTTLeaderboardsEasy.GameCountEasy * 100.0f, 2)%
-                                </td>
-                                <td class="text-center">
-                                    @Html.DisplayFor(modelItem => item.TTTLeaderboardsEasy.GameCountEasy)
-                                </td>
-                            </tr>
+                            foreach (var item in Model[0].Take(10).ToList())
+                            {
+                                <tr>
+                                    <td class="text-center">
+                                        @Html.DisplayFor(modelItem => item.Key)
+                                    </td>
+                                    <td class="text-center">
+                                        @Html.DisplayFor(modelItem => item.Value.WinCountEasy)
+                                    </td>
+                                    <td class="text-center">
+                                        @Math.Round((double)item.Value.WinCountEasy / (double)item.Value.GameCountEasy * 100.0f, 2)%
+                                    </td>
+                                    <td class="text-center">
+                                        @Html.DisplayFor(modelItem => item.Value.GameCountEasy)
+                                    </td>
+                                </tr>
+                            }
                         }
                     }
                     //empty list on easy leaderboards
-                    catch { } 
+                    catch (Exception e)
+                    {
+                        throw e;
+                    }
                 </tbody>
             </table>
         </div>
@@ -79,36 +85,36 @@
                 <thead>
                     <tr>
                         <th class="text-center">
-                            @Html.DisplayNameFor(model => model.First().Username)
+                            @Html.DisplayNameFor(model => model[1].First().Key)
                         </th>
                         <th class="text-center">
-                            @Html.DisplayNameFor(model => model.First().TTTLeaderboardsNotSoEasy.WinCount)
+                            @Html.DisplayNameFor(model => model[1].First().Value.WinCount)
                         </th>
                         <th class="text-center">
                             WinRate
                         </th>
                         <th class="text-center">
-                            @Html.DisplayNameFor(model => model.First().TTTLeaderboardsNotSoEasy.GameCount)
+                            @Html.DisplayNameFor(model => model[1].First().Value.GameCount)
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     @try
                     {
-                        foreach (var item in Model.OrderByDescending(p => (float)p.TTTLeaderboardsNotSoEasy.WinCount / (float)p.TTTLeaderboardsNotSoEasy.GameCount).Take(10).ToList())
+                        foreach (var item in Model[1].Take(10).ToList())
                         {
                             <tr>
                                 <td class="text-center">
-                                    @Html.DisplayFor(modelItem => item.Username)
+                                    @Html.DisplayFor(modelItem => item.Key)
                                 </td>
                                 <td class="text-center">
-                                    @Html.DisplayFor(modelItem => item.TTTLeaderboardsNotSoEasy.WinCount)
+                                    @Html.DisplayFor(modelItem => item.Value.WinCount)
                                 </td>
                                 <td class="text-center">
-                                    @Math.Round((double)item.TTTLeaderboardsNotSoEasy.WinCount / (double)item.TTTLeaderboardsNotSoEasy.GameCount * 100.0f, 2)%
+                                    @Math.Round((double)item.Value.WinCount / (double)item.Value.GameCount * 100.0f, 2)%
                                 </td>
                                 <td class="text-center">
-                                    @Html.DisplayFor(modelItem => item.TTTLeaderboardsNotSoEasy.GameCount)
+                                    @Html.DisplayFor(modelItem => item.Value.GameCount)
                                 </td>
                             </tr>
                         }

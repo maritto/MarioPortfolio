@@ -7,17 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="NewFolder\**" />
-    <Content Remove="NewFolder\**" />
-    <EmbeddedResource Remove="NewFolder\**" />
-    <None Remove="NewFolder\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Remove="Data\Migrations\00000000000000_CreateIdentitySchema.cs" />
     <Compile Remove="Data\Migrations\00000000000000_CreateIdentitySchema.Designer.cs" />
     <Compile Remove="Migrations\20200127055028_last.cs" />
     <Compile Remove="Migrations\20200127055028_last.Designer.cs" />
+    <Compile Remove="Migrations\20200127063451_last.cs" />
+    <Compile Remove="Migrations\20200127063451_last.Designer.cs" />
+    <Compile Remove="Migrations\20200202035045_Last.cs" />
+    <Compile Remove="Migrations\20200202035045_Last.Designer.cs" />
   </ItemGroup>
 
 
@@ -30,6 +27,11 @@
 
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\EasyImageHandler\EasyImageHandler.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using EasyImageHandler;
+using MarioPortfolio.Data;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -16,15 +20,18 @@ namespace MarioPortfolio.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
+        private readonly ApplicationDbContext _context;
 
         public IndexModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
+            _context = context;
         }
 
         public string Username { get; set; }
@@ -66,8 +73,12 @@ namespace MarioPortfolio.Areas.Identity.Pages.Account.Manage
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(IFormFile profilePicture)
         {
+            if (!profilePicture.IsValidImage(out _) && profilePicture != null)
+            {
+                ModelState.AddModelError(string.Empty, "Not a valid image.");
+            }
             if (!ModelState.IsValid)
             {
                 return Page();
@@ -79,11 +90,20 @@ namespace MarioPortfolio.Areas.Identity.Pages.Account.Manage
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            var result = await _userManager.SetUserNameAsync( user , Input.Username);
+            var result = await _userManager.SetUserNameAsync(user, Input.Username);
             if (!result.Succeeded)
             {
                 ModelState.AddModelError("Username", result.Errors.First().Description);
                 return Page();
+            }
+            if (profilePicture != null)
+            {
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    await profilePicture.CopyToAsync(ms);
+                    _context.Users.Where(p => p.Id == user.Id).First().ProfilePicture = ms.ToArray();
+                    await _context.SaveChangesAsync();
+                }
             }
 
             var email = await _userManager.GetEmailAsync(user);

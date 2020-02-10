@@ -24,23 +24,23 @@ function ScaleFontSize() {
 }
 
 function Play(coord) {
+
     if (gameOver == true) {
         return;
     }
     $.ajax({
         async: true,
         type: 'POST',
-        dataType: 'json',
-        data: { GameId: document.URL.split('/')[5] , Coordinates: coord[0] + "," + coord[1] },
-        headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+        dataType: 'text',
+        data: { GameId: document.URL.split('/')[5], Coordinates: coord[0] + "," + coord[1] },
         url: "/TicTacToe/PlayerAction/",
         success: function (data) {
-            if (!data)
-                return;
             if (CheckIfValid(coord)) {
                 if (isPlayerTurn) {
                     $("#" + coord[0] + "" + coord[1]).html("X");
                     TicTacToeMap[coord] = 'X';
+                    if (data)
+                        data = data.split(',').map(Number);
                 } else {
                     $("#" + coord[0] + "" + coord[1]).html("O");
                     TicTacToeMap[coord] = 'O';
@@ -57,7 +57,13 @@ function Play(coord) {
                     }
                 }
                 isPlayerTurn = !isPlayerTurn;
+                if (!isPlayerTurn) {
+                    Play(data);
+                }
             }
+        },
+        error: function (data) {
+            alert(JSON.stringify(data));
         }
     });
 }
@@ -113,9 +119,9 @@ function EndGame(XWin) {
 }
 
 function DidWeWinYet(coord) {
-    if (TicTacToeMap[coord[0] + ",0"] == TicTacToeMap[coord[0] + ",1"] && TicTacToeMap[coord[0] + ",1"] == TicTacToeMap[coord[0] + ",2"])
+    if (TicTacToeMap[coord] != undefined && TicTacToeMap[coord[0] + ",0"] == TicTacToeMap[coord[0] + ",1"] && TicTacToeMap[coord[0] + ",1"] == TicTacToeMap[coord[0] + ",2"])
         return true;
-    if (TicTacToeMap["0," + coord[1]] == TicTacToeMap["1," + coord[1]] && TicTacToeMap["1," + coord[1]] == TicTacToeMap["2," + coord[1]])
+    if (TicTacToeMap[coord] != undefined && TicTacToeMap["0," + coord[1]] == TicTacToeMap["1," + coord[1]] && TicTacToeMap["1," + coord[1]] == TicTacToeMap["2," + coord[1]])
         return true;
     if (TicTacToeMap["1,1"] != undefined && TicTacToeMap["0,0"] == TicTacToeMap["1,1"] && TicTacToeMap["1,1"] == TicTacToeMap["2,2"])//diagonal check
         return true;
