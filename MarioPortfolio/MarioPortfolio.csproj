@@ -31,7 +31,9 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\EasyImageHandler\EasyImageHandler.csproj" />
+    <Reference Include="EasyImageHandler">
+      <HintPath>Dependencies\EasyImageHandler.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
