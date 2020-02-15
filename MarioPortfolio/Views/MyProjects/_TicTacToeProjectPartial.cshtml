@@ -1,0 +1,34 @@
+﻿<div class="card text-center mb-5 mt-5 project project-shrink">
+    <div class="card-header clickable">
+        <span class="h2">
+            TicTacToe
+        </span>
+        <span class="fas fa-angle-double-down h4 float-right img-thumbnail border"></span>
+    </div>
+    <div class="card-body text-left hide-by-height">
+        <div class="text-content">
+            <h4>This project can be subdivided in 4 parts:</h4>
+            <ul class="list-group list-group-flush p-3">
+                <li id="btn-ui" class="list-group-item btn btn-light border-0 scroll-nav">
+                    User interface
+                </li>
+                <li id="btn-authorization-authentication" class="list-group-item btn btn-light scroll-nav">
+                    Authentication and Authorization
+                </li>
+                <li id="btn-artificial-inteligence" class="list-group-item btn btn-light scroll-nav">
+                    Artificial inteligence
+                </li>
+                <li id="btn-leaderboards-data" class="list-group-item btn btn-light scroll-nav border-bottom-0">
+                    Leaderboards data
+                </li>
+            </ul>
+            <partial name="_UserInterfacePartial" />
+            <partial name="_AuthenticationAndAuthorizationPartial" />
+            <partial name="_ArtificialInteligencePartial" />
+            <partial name="_LeaderBoardsDataPartial" />
+        </div>
+    </div>
+    <div class="card-footer">
+        <a href="https://github.com/maritto/MarioPortfolio" target="_blank" class="col-12 p-0">Visit GIT branch project at TicTacToe <span class="fas fa-external-link-alt"></span></a>
+    </div>
+</div>

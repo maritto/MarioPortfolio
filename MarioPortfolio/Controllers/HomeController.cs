@@ -13,6 +13,7 @@ namespace MarioPortfolio.Controllers
     {
         public IActionResult Index()
         {
+            return RedirectToAction("Index", "MyProjects");
             return View();
         }
 

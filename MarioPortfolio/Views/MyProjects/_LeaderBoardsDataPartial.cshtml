@@ -1,0 +1,32 @@
+﻿<h4 class="mt-5 btn-leaderboards-data">LeaderBoards Data</h4>
+<div class="p-4">
+    For the Leaderboards data i used the default
+    <span class="border rounded p-1 dont-break">AspNetUsers</span>
+    <span class="border rounded p-1 dont-break">Entity Framework</span>
+    table and added the field for the
+    <span class="border rounded p-1 dont-break">Profile Picture</span>
+    . <hr class="large-line-break" />
+    From there i created a table that would store all the
+    <span class="border rounded p-1 dont-break">Moves</span>
+    for a certain
+    <span class="border rounded p-1 dont-break">Game</span>
+    along with the
+    <span class="border rounded p-1 dont-break">Mode</span>
+    selected for it.<hr class="large-line-break" />
+    From there i could retrieve all the details necessary to fill the
+    <span class="border rounded p-1 dont-break">Leaderboards</span> table, but would spend a lot of resources calculating them every time someone
+    visited the page. And since our
+    <span class="border rounded p-1 dont-break">UX</span>
+    required our users to go through that page to start a
+    <span class="border rounded p-1 dont-break">Game</span>
+    it would have to do it over and over. To prevent that i created another table that would store that information and make it easily acessible without big queries.
+    That table is
+    <span class="border rounded p-1 dont-break">TTTLeaderboards</span> and just stores the
+    <span class="border rounded p-1 dont-break">Game Count</span>
+    and
+    <span class="border rounded p-1 dont-break">Win Count</span>
+    for each of the modes and ties it to the
+    <span class="border rounded p-1 dont-break">User ID</span>.
+    Below is a chart of the E-R model for this database:
+    <div class="text-center"><img class="in-text-image" src="~/img/DataModelTrans.png" /></div>
+</div>
